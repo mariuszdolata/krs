@@ -2,29 +2,41 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 	version="2.0">
-	<persistence-unit name="crawling_krs_pobierz_pl_profil" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="crawling_krs_pobierz_pl_profil"
+		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-<!-- 		<jta-data-source>java:/DefaultDS</jta-data-source> -->
-<!-- 		<mapping-file>ormap.xml</mapping-file> -->
-<!-- 		<jar-file>MyApp.jar</jar-file> -->
-<!-- 		<class>org.acme.Employee</class> -->
-<!-- 		<class>org.acme.Person</class> -->
-<!-- 		<class>org.acme.Address</class> -->
-
 		<properties>
-			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
-			<property name="hibernate.connection.password" value="haslo"/>
-			<property name="hibernate.connection.url" value="jdbc:mysql://176.119.61.229:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT"/>
-			<property name="hibernate.connection.username" value="java"/>
-			<property name="hibernate.default_schema" value="krs_pobierz_pl_profil"/>
-<!-- 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/> -->
-<!-- 			<property name="javax.persistence.jdbc.user" value="root"/> -->
-<!-- 			<property name="javax.persistence.jdbc.password" value="XXXX"/> -->
-<!-- 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/baza_testowa"/> -->
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+			<property name="hibernate.connection.password" value="haslo" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://176.119.61.229:3306/krs_pobierz_pl_profil?useTimezone=true&amp;serverTimezone=GMT" />
+
+			<property name="hibernate.connection.username" value="java" />
+			<property name="hibernate.default_schema" value="krs_pobierz_pl_profil" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="false" />
-<!-- 			<property name="hibernate.connection.requireSSL" value="false"/> -->
+			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
 	</persistence-unit>
+
+	<persistence-unit name="bisnode_pl" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+			<property name="hibernate.connection.password" value="${database.password}" />
+<!-- 			<property name="hibernate.connection.url" -->
+<!-- 				value="jdbc:mysql://176.119.61.229:3306/bisnode_pl?useTimezone=true&amp;serverTimezone=GMT" /> -->
+			<property name="hibernate.connection.url"
+				value="${database.url}" />
+			<property name="hibernate.connection.username" value="${database.user}" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true" />
+			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
+			
+		</properties>
+		
+	</persistence-unit>
+
 </persistence>

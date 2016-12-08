@@ -213,4 +213,14 @@ public class KRSProfil extends MainCrawler implements Scrape {
 		} while (!this.urlsToScrape.isEmpty());
 	}
 
+	public void insertDataEntity(Object o) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public <T> void insertDataListEntity(List<T> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

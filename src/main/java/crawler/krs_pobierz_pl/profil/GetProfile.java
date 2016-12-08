@@ -11,33 +11,22 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-
-
-
 public class GetProfile {
 	private String urlToScrape;
 	private String idHost;
-	
-	
-	
+
 	public String getUrlToScrape() {
 		return urlToScrape;
 	}
-
-
-
 
 	public void setUrlToScrape(String urlToScrape) {
 		this.urlToScrape = urlToScrape;
 	}
 
-
-
-
 	public GetProfile(String urlToScrape, String idHost, String idThread) {
 
-		this.idHost=idHost;
-		this.urlToScrape=urlToScrape;
+		this.idHost = idHost;
+		this.urlToScrape = urlToScrape;
 		Profil mainProfil = new Profil();
 		mainProfil.setIdHost(this.getIdHost());
 		mainProfil.setIdThread(idThread);
@@ -48,13 +37,31 @@ public class GetProfile {
 			DomElement contactData = mainPage.getElementById("contactData");
 			DomElement basicDataTable = mainPage.getElementById("basicDataTable");
 			DomElement pageHeader = mainPage.getFirstByXPath("//div[@class=\"page-header\"]");
-			List<Object> osoby=(List<Object>) mainPage.getByXPath("//tr[@itemtype=\"http://data-vocabulary.org/Person\"]");
-			String[] header = pageHeader.asText().split("\n");
-			String[]  basicDataTableLines = basicDataTable.asText().split("\n");
-			String[] contactDataLines = contactData.asText().split("\n");
+			List<Object> osoby = (List<Object>) mainPage
+					.getByXPath("//tr[@itemtype=\"http://data-vocabulary.org/Person\"]");
+			
+			String [] header;
+			String[] basicDataTableLines;
+			String[] contactDataLines;
+			try{
+				 header = pageHeader.asText().split("\n");
+				 basicDataTableLines = basicDataTable.asText().split("\n");
+				 contactDataLines = contactData.asText().split("\n");
+			}catch(Exception e){
+				System.err.println("M:prawdopodobnie nie pobralo kodu zrodlowego dla strony "+urlToScrape);
+				header = new String[1];
+				header[0]="";
+				 basicDataTableLines = new String[1];
+				basicDataTableLines[0]="";
+				contactDataLines = new String[1];
+				contactDataLines[0]="";
+			}
+			
 			for (int i = 0; i < contactDataLines.length; i++) {
-				if(contactDataLines[i].contains("Adres strony WWW:"))mainProfil.setWebsite(contactDataLines[i].substring(18));
-				if(contactDataLines[i].contains("Adres email:	"))mainProfil.setEmail(contactDataLines[i].substring(13));
+				if (contactDataLines[i].contains("Adres strony WWW:"))
+					mainProfil.setWebsite(contactDataLines[i].substring(18));
+				if (contactDataLines[i].contains("Adres email:	"))
+					mainProfil.setEmail(contactDataLines[i].substring(13));
 			}
 			for (int i = 0; i < header.length; i++) {
 				System.out.println("Header(" + i + ")" + header[i]);
@@ -95,55 +102,49 @@ public class GetProfile {
 				if (basicDataTableLines[i].contains("Przewa¿aj¹ca dzia³alnoœæ gospodarcza	"))
 					mainProfil.setPrzewazajacaDzialalnoscGospodarcza(basicDataTableLines[i].substring(37));
 				System.out.println(mainPage.asText());
-				
-				
+
 				System.out.println("Koniec");
 
 			}
-			List<DomNode> osobyNode= (List<DomNode>) mainPage.getByXPath("//th[@itemprop=\"name\"]");
-			List<DomNode> osobyRole= (List<DomNode>) mainPage.getByXPath("//div[@itemprop=\"role\"]");
-			List<DomNode> osobyAffil= (List<DomNode>) mainPage.getByXPath("//td/span[@style=\"display:none\"]");
-			for(int iter=0;iter<osobyNode.size();iter++){
-				System.out.println("OsobyNode.size()="+osobyNode.size());
-				System.out.println("osoba= "+osobyNode.get(iter).asText()+", stanowisko= "+osobyRole.get(iter).asText()+", affil= "+osobyAffil.get(iter).asText());
-//				String danePersonalne=
-				String []imieNazwisko=osobyNode.get(iter).asText().toString().split(" ");
-				if(imieNazwisko.length>=2){
-					mainProfil.getOsoby().add(new Osoba(imieNazwisko[0], imieNazwisko[1], osobyRole.get(iter).asText()));
-				}else{
-					mainProfil.getOsoby().add(new Osoba("", osobyNode.get(iter).asText(), osobyRole.get(iter).asText()));
+			List<DomNode> osobyNode = (List<DomNode>) mainPage.getByXPath("//th[@itemprop=\"name\"]");
+			List<DomNode> osobyRole = (List<DomNode>) mainPage.getByXPath("//div[@itemprop=\"role\"]");
+			List<DomNode> osobyAffil = (List<DomNode>) mainPage.getByXPath("//td/span[@style=\"display:none\"]");
+			for (int iter = 0; iter < osobyNode.size(); iter++) {
+				System.out.println("OsobyNode.size()=" + osobyNode.size());
+				System.out.println("osoba= " + osobyNode.get(iter).asText() + ", stanowisko= "
+						+ osobyRole.get(iter).asText() + ", affil= " + osobyAffil.get(iter).asText());
+				// String danePersonalne=
+				String[] imieNazwisko = osobyNode.get(iter).asText().toString().split(" ");
+				if (imieNazwisko.length >= 2) {
+					mainProfil.getOsoby()
+							.add(new Osoba(imieNazwisko[0], imieNazwisko[1], osobyRole.get(iter).asText()));
+				} else {
+					mainProfil.getOsoby()
+							.add(new Osoba("", osobyNode.get(iter).asText(), osobyRole.get(iter).asText()));
 				}
+			}
+			if (mainProfil.getNazwa().length() > 2) {
+				EntityManagerFactory entityManagerFactory = Persistence
+						.createEntityManagerFactory("crawling_krs_pobierz_pl_profil");
+				EntityManager entityManager = entityManagerFactory.createEntityManager();
+				entityManager.getTransaction().begin();
+				entityManager.persist(mainProfil);
+				entityManager.getTransaction().commit();
+				entityManager.close();
+				entityManagerFactory.close();
 			}
 			// System.out.println(elementStr);
 		} catch (Exception e) {
 			System.err.println("M: problem z wczytaniem strony");
 			e.printStackTrace();
 		}
+		// nie ³¹czy siê z baz¹ w przypadku NULL
 		
-
-		EntityManagerFactory entityManagerFactory = Persistence
-				.createEntityManagerFactory("crawling_krs_pobierz_pl_profil");
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-
-		entityManager.getTransaction().begin();
-		//nie zapisuje NULLi
-		if(mainProfil.getMeta().length()>10)entityManager.persist(mainProfil);
-		entityManager.getTransaction().commit();
-
-		entityManager.close();
-		entityManagerFactory.close();
-
 	}
-
-
-
 
 	public String getIdHost() {
 		return idHost;
 	}
-
-
-
 
 	public void setIdHost(String idHost) {
 		this.idHost = idHost;

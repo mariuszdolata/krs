@@ -10,11 +10,33 @@ import crawler.api.DatabaseConfig;
 
 public class ProfilThread implements Runnable{
 	private int number;
+	private int idHost;
 	
 
-	public ProfilThread(int number) {
+	public int getNumber() {
+		return number;
+	}
+
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+
+	public int getIdHost() {
+		return idHost;
+	}
+
+
+	public void setIdHost(int idHost) {
+		this.idHost = idHost;
+	}
+
+
+	public ProfilThread(int number, int idHost) {
 		super();
 		this.number = number;
+		this.idHost=idHost;
 	}
 
 
@@ -25,7 +47,7 @@ public class ProfilThread implements Runnable{
 		do {
 			urlsToScrape.clear();
 			urlsToScrape = profilRepository.fetchUrlToScrape();
-			String idHost = "5";
+			String idHost = Integer.toString(this.getIdHost());
 			String idThread= String.valueOf(this.number);
 			for (int i = 0; i < urlsToScrape.size(); i++) {
 				System.out.println("urlToScrape=" + urlsToScrape.get(i));
